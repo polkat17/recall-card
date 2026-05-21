@@ -1,12 +1,14 @@
+$ cat /tmp/card.html
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-  <title>Recall Card</title>
-  <meta name="description" content="A personal card shared via Recall — the app that helps you remember the people you meet." />
-  <meta property="og:title" content="Recall Card" />
-  <meta property="og:description" content="View and save this contact in Recall." />
+  <title>Recalla Card</title>
+  <meta name="description" content="Never forget human details. Recalla is a private memory log for the people in your life — no accounts, no cloud." />
+  <meta property="og:title" content="Recalla Card" />
+  <meta property="og:description" content="Never forget human details. Private memory logs, stored on your device." />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -193,7 +195,7 @@
       color: var(--dark);
     }
 
-    /* What is Recall */
+    /* What is Recalla */
     .pitch {
       width: 100%;
       max-width: 400px;
@@ -276,9 +278,9 @@
   </style>
 </head>
 <body>
-  <p class="wordmark">Recall</p>
+  <p class="wordmark">Recalla</p>
   <div id="root"></div>
-  <p class="powered">Shared via Recall</p>
+  <p class="powered">Shared via Recalla</p>
 
   <script>
     const params = new URLSearchParams(window.location.search);
@@ -336,37 +338,37 @@
 
     const pitchHtml = `
       <div class="pitch">
-        <p class="pitch-label">What is Recall?</p>
-        <h2 class="pitch-headline">Remember every person<br>you've ever met</h2>
-        <p class="pitch-body">Recall is a personal CRM that helps you build deeper relationships — log memories, get AI-powered briefings before meetings, and share your own card like this one.</p>
+        <p class="pitch-label">What is Recalla?</p>
+        <h2 class="pitch-headline">Never forget<br>human details</h2>
+        <p class="pitch-body">Recalla gives every contact their own private memory log — stored entirely on your device. No accounts, no cloud sync, no data collection.</p>
         <div class="features">
           <div class="feature">
             <div class="feature-icon">🧠</div>
             <div class="feature-text">
-              <div class="feature-title">Log what matters</div>
-              <div class="feature-desc">Capture memories about people after every conversation</div>
+              <div class="feature-title">Memory logs by category</div>
+              <div class="feature-desc">Family, background, plans, work — find what matters in seconds</div>
             </div>
           </div>
           <div class="feature">
-            <div class="feature-icon">✨</div>
+            <div class="feature-icon">🔒</div>
             <div class="feature-text">
-              <div class="feature-title">Quick Brief</div>
-              <div class="feature-desc">Get an AI summary of anyone before you meet them</div>
+              <div class="feature-title">Fully private</div>
+              <div class="feature-desc">Everything stays on your device. No account required</div>
             </div>
           </div>
           <div class="feature">
             <div class="feature-icon">🪪</div>
             <div class="feature-text">
               <div class="feature-title">Share your own card</div>
-              <div class="feature-desc">Create a card like this and share it with QR or link</div>
+              <div class="feature-desc">Create a card like this and share it via QR or link</div>
             </div>
           </div>
         </div>
-        <a class="btn btn-primary" href="https://github.com/polkat17/recall" target="_blank">Get Recall →</a>
+        <a class="btn btn-primary" href="https://github.com/polkat17/recall" target="_blank">Get Recalla →</a>
       </div>`;
 
     if (!encoded) {
-      root.innerHTML = `<p class="error">No card data in this link.<br>Ask the person to reshare from their Recall app.</p>${pitchHtml}`;
+      root.innerHTML = `<p class="error">No card data in this link.<br>Ask the person to reshare from their Recalla app.</p>${pitchHtml}`;
     } else {
       const c = decode(encoded);
       if (!c) {
@@ -396,7 +398,7 @@
           </div>` : '';
 
         // Update page title + og tags dynamically
-        document.title = `${c.n || 'Shared Card'} — Recall`;
+        document.title = `${c.n || 'Shared Card'} — Recalla`;
 
         root.innerHTML = `
           <div class="card">
@@ -413,9 +415,9 @@
           </div>
 
           <div class="actions">
-            <a class="btn btn-primary" href="${deepLink}">Save in Recall</a>
+            <a class="btn btn-primary" href="${deepLink}">Save in Recalla</a>
             <button class="btn btn-outline" id="vcardBtn">Add to Phone Contacts</button>
-            <a class="btn btn-secondary" href="https://github.com/polkat17/recall" target="_blank">Don't have Recall yet →</a>
+            <a class="btn btn-secondary" href="https://github.com/polkat17/recall" target="_blank">Don't have Recalla yet →</a>
           </div>
 
           ${pitchHtml}`;
