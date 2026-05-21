@@ -32,19 +32,23 @@
     }
 
     /* Brand */
-    .wordmark-logo {
-      width: 40px;
-      height: 40px;
-      margin-bottom: 32px;
-      border-radius: 12px;
-      display: block;
-    }
     .wordmark {
-      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 36px;
+    }
+    .wordmark-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      flex-shrink: 0;
+    }
+    .wordmark-text {
+      font-size: 13px;
       font-weight: 700;
       letter-spacing: 3px;
       color: #CCC;
-      margin-bottom: 36px;
       text-transform: uppercase;
     }
 
@@ -283,7 +287,10 @@
   </style>
 </head>
 <body>
-  <img src="./logo.png" alt="Recalla" class="wordmark-logo" />
+  <div class="wordmark">
+    <img src="./logo.png" alt="" class="wordmark-logo" />
+    <span class="wordmark-text">Recalla</span>
+  </div>
   <div id="root"></div>
   <p class="powered">Shared via Recalla</p>
 
