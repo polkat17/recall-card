@@ -161,7 +161,7 @@
       text-decoration: none;
     }
     .contact-row:hover { color: var(--dark); }
-    .contact-icon { font-size: 15px; width: 20px; text-align: center; }
+    .contact-icon { width: 18px; height: 18px; flex-shrink: 0; }
 
     /* Actions */
     .actions {
@@ -253,7 +253,6 @@
     }
 
     .feature-icon {
-      font-size: 18px;
       width: 32px;
       height: 32px;
       background: var(--faint);
@@ -262,6 +261,13 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      color: var(--dark);
+    }
+
+    .location {
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
 
     .feature-text { padding-top: 4px; }
@@ -348,6 +354,17 @@
       URL.revokeObjectURL(url);
     }
 
+    // Monoline SVG icons — 1.4px stroke, 24-unit viewBox, currentColor
+    const ic = {
+      email: `<svg class="contact-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="15" rx="2"/><path d="M2 9l10 6.5L22 9"/></svg>`,
+      phone: `<svg class="contact-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3-8.59A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>`,
+      link:  `<svg class="contact-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>`,
+      pin:   `<svg class="contact-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22S5 15 5 9a7 7 0 0114 0c0 6-7 13-7 13z"/><circle cx="12" cy="9" r="2.5"/></svg>`,
+      lock:  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>`,
+      doc:   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>`,
+      card:  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><rect x="2" y="5" width="20" height="15" rx="2.5"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/></svg>`,
+    };
+
     const pitchHtml = `
       <div class="pitch">
         <p class="pitch-label">What is Recalla?</p>
@@ -355,21 +372,21 @@
         <p class="pitch-body">Recalla gives every contact their own private memory log — stored entirely on your device. No accounts, no cloud sync, no data collection.</p>
         <div class="features">
           <div class="feature">
-            <div class="feature-icon">🧠</div>
+            <div class="feature-icon">${ic.doc}</div>
             <div class="feature-text">
               <div class="feature-title">Memory logs by category</div>
               <div class="feature-desc">Family, background, plans, work — find what matters in seconds</div>
             </div>
           </div>
           <div class="feature">
-            <div class="feature-icon">🔒</div>
+            <div class="feature-icon">${ic.lock}</div>
             <div class="feature-text">
               <div class="feature-title">Fully private</div>
               <div class="feature-desc">Everything stays on your device. No account required</div>
             </div>
           </div>
           <div class="feature">
-            <div class="feature-icon">🪪</div>
+            <div class="feature-icon">${ic.card}</div>
             <div class="feature-text">
               <div class="feature-title">Share your own card</div>
               <div class="feature-desc">Create a card like this and share it via QR or link</div>
@@ -404,9 +421,9 @@
         const contactsHtml = hasContacts ? `
           <div class="divider"></div>
           <div class="contacts">
-            ${c.e ? `<a class="contact-row" href="mailto:${esc(c.e)}"><span class="contact-icon">✉️</span>${esc(c.e)}</a>` : ''}
-            ${c.p ? `<a class="contact-row" href="tel:${esc(c.p)}"><span class="contact-icon">📞</span>${esc(c.p)}</a>` : ''}
-            ${c.li ? `<a class="contact-row" href="https://${esc(c.li)}" target="_blank"><span class="contact-icon">🔗</span>${esc(c.li)}</a>` : ''}
+            ${c.e  ? `<a class="contact-row" href="mailto:${esc(c.e)}">${ic.email}${esc(c.e)}</a>` : ''}
+            ${c.p  ? `<a class="contact-row" href="tel:${esc(c.p)}">${ic.phone}${esc(c.p)}</a>` : ''}
+            ${c.li ? `<a class="contact-row" href="https://${esc(c.li)}" target="_blank">${ic.link}${esc(c.li)}</a>` : ''}
           </div>` : '';
 
         // Update page title + og tags dynamically
@@ -419,7 +436,7 @@
               <div class="identity">
                 <div class="name">${title}</div>
                 ${(c.r || c.c) ? `<div class="meta">${esc([c.r, c.c].filter(Boolean).join(' · '))}</div>` : ''}
-                ${c.l ? `<div class="location">📍 ${esc(c.l)}</div>` : ''}
+                ${c.l ? `<div class="location">${ic.pin}${esc(c.l)}</div>` : ''}
               </div>
             </div>
             ${hooksHtml}
