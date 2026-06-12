@@ -5,8 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
   <title>Recalla Card</title>
   <meta name="description" content="Never forget human details. Recalla is a private memory log for the people in your life." />
-  <meta property="og:title" content="Recalla Card" />
-  <meta property="og:description" content="Never forget human details. Private memory logs, stored on your device." />
+  <meta property="og:title" content="Someone shared their card with you" />
+  <meta property="og:description" content="Open it to see their details and conversation hooks. Made with Recalla — never forget human details." />
+  <meta property="og:image" content="https://polkat17.github.io/recall-card/og-image.png" />
+  <meta property="og:type" content="website" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -277,16 +279,30 @@
   </div>
 
   <div id="root"></div>
-  <p class="powered">Shared via Recalla</p>
+  <p class="powered">Shared via <a href="https://play.google.com/store/apps/details?id=com.plktstudios.recalla&referrer=utm_source%3Drecalla_card%26utm_medium%3Dfooter%26utm_campaign%3Dviral" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:2px">Recalla</a> — never forget human details</p>
 
   <script>
-    const params  = new URLSearchParams(window.location.search);
-    const encoded = params.get('d');
-    const root    = document.getElementById('root');
+    const params   = new URLSearchParams(window.location.search);
+    const encodedC = params.get('c');   // v2: deflate-raw + base64url (compact)
+    const encodedD = params.get('d');   // v1: plain base64 JSON (legacy)
+    const root     = document.getElementById('root');
 
-    function decode(enc) {
+    function decodeLegacy(enc) {
       try { return JSON.parse(decodeURIComponent(escape(atob(enc)))); }
       catch (_) { return null; }
+    }
+
+    async function decodeCompact(enc) {
+      try {
+        const b64 = enc.replace(/-/g, '+').replace(/_/g, '/');
+        const bin = atob(b64 + '='.repeat((4 - (b64.length % 4)) % 4));
+        const bytes = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        const ds = new DecompressionStream('deflate-raw');
+        const stream = new Blob([bytes]).stream().pipeThrough(ds);
+        const json = await new Response(stream).text();
+        return JSON.parse(json);
+      } catch (_) { return null; }
     }
 
     function initials(name) {
@@ -365,7 +381,8 @@
       gplay: `<svg viewBox="0 0 24 24" style="width:20px;height:20px;flex-shrink:0" fill="currentColor"><path d="M3.18 23.76c.36.2.78.22 1.16.07l.07-.04 11.14-6.43-2.42-2.42-9.95 8.82zm-1.35-20.4A1.75 1.75 0 001.5 4.7v14.6c0 .55.2 1.03.54 1.38l.07.07 8.19-8.19-8.47-9zm14.7 7.14L13.8 7.77 2.66.72a1.38 1.38 0 00-1.24-.06l9.97 9.97 5.14-2.13zm3.16 1.85l-2.66-1.54-2.85 2.85 2.85 2.85 2.68-1.55c.76-.44.76-1.16-.02-1.61z"/></svg>`,
     };
 
-    const PLAY_STORE = 'https://play.google.com/store/apps/details?id=com.plktstudios.recalla';
+    // UTM-tagged so Play Console shows installs that came from card shares
+    const PLAY_STORE = 'https://play.google.com/store/apps/details?id=com.plktstudios.recalla&referrer=utm_source%3Drecalla_card%26utm_medium%3Dcard_share%26utm_campaign%3Dviral';
 
     const gplayBtn = `
       <a class="gplay-btn" href="${PLAY_STORE}" target="_blank">
@@ -407,16 +424,19 @@
         ${gplayBtn}
       </div>`;
 
-    if (!encoded) {
+    async function main() {
+    if (!encodedC && !encodedD) {
       root.innerHTML = `<p class="error">No card data found in this link.<br>Ask the person to reshare from their Recalla app.</p>${pitchHtml}`;
     } else {
-      const c = decode(encoded);
+      const c = encodedC ? await decodeCompact(encodedC) : decodeLegacy(encodedD);
       if (!c) {
         root.innerHTML = `<p class="error">This link appears to be broken.<br>Ask the person to reshare it.</p>${pitchHtml}`;
       } else {
         const hooks       = (c.h || []).filter(Boolean);
         const hasContacts = c.e || c.p || c.li;
-        const deepLink    = 'recalla://card?d=' + encodeURIComponent(encoded);
+        const deepLink    = encodedC
+          ? 'recalla://card?c=' + encodeURIComponent(encodedC)
+          : 'recalla://card?d=' + encodeURIComponent(encodedD);
         const title       = esc(c.n) || 'Shared Card';
 
         document.title = `${c.n || 'Shared Card'} — Recalla`;
@@ -464,6 +484,8 @@
         document.getElementById('vcardBtn').addEventListener('click', () => downloadVCard(c));
       }
     }
+    }
+    main();
   </script>
 </body>
 </html>
