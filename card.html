@@ -344,20 +344,22 @@
       }
     }
 
+    function vcf(s) { return (s || '').replace(/[\r\n]/g, ' ').trim(); }
+
     function buildVCard(c) {
-      const parts = (c.n || '').trim().split(/\s+/);
+      const parts = vcf(c.n).split(/\s+/);
       const first = parts[0] || '';
       const last  = parts.slice(1).join(' ') || '';
       const lines = [
         'BEGIN:VCARD', 'VERSION:3.0',
-        `FN:${c.n || ''}`,
-        `N:${last};${first};;;`,
+        `FN:${vcf(c.n)}`,
+        `N:${vcf(last)};${vcf(first)};;;`,
       ];
-      if (c.c)  lines.push(`ORG:${c.c}`);
-      if (c.r)  lines.push(`TITLE:${c.r}`);
-      if (c.e)  lines.push(`EMAIL;TYPE=WORK:${c.e}`);
-      if (c.p)  lines.push(`TEL;TYPE=CELL:${c.p}`);
-      if (c.li) lines.push(`URL:${toHref(c.li)}`);
+      if (c.c)  lines.push(`ORG:${vcf(c.c)}`);
+      if (c.r)  lines.push(`TITLE:${vcf(c.r)}`);
+      if (c.e)  lines.push(`EMAIL;TYPE=WORK:${vcf(c.e)}`);
+      if (c.p)  lines.push(`TEL;TYPE=CELL:${vcf(c.p)}`);
+      if (c.li) lines.push(`URL:${vcf(toHref(c.li))}`);
       lines.push('END:VCARD');
       return lines.join('\r\n');
     }
