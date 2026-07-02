@@ -264,6 +264,11 @@
       <button class="ios-banner-close" id="iosBannerClose" aria-label="Dismiss">×</button>
     </div>
   </div>
+  <script>
+    // Inline + synchronous so a returning visitor who dismissed the banner
+    // never sees it flash before the end-of-body script runs.
+    try { if (localStorage.getItem('iosBannerDismissed')) document.getElementById('iosBanner').classList.add('hide'); } catch (_) {}
+  </script>
 
   <!-- HERO -->
   <section class="hero">
@@ -508,15 +513,11 @@
   function initSite() {
     var banner = document.getElementById('iosBanner');
     var bannerClose = document.getElementById('iosBannerClose');
-    if (banner) {
-      if (localStorage.getItem('iosBannerDismissed')) {
+    if (banner && bannerClose) {
+      bannerClose.addEventListener('click', function () {
         banner.classList.add('hide');
-      } else if (bannerClose) {
-        bannerClose.addEventListener('click', function () {
-          banner.classList.add('hide');
-          try { localStorage.setItem('iosBannerDismissed', '1'); } catch (_) {}
-        });
-      }
+        try { localStorage.setItem('iosBannerDismissed', '1'); } catch (_) {}
+      });
     }
 
     var hdr = document.getElementById('hdr');
@@ -546,7 +547,7 @@
     // throttled or unreliable inside cross-origin iframes / some embeds).
     function update() {
       var vh = window.innerHeight;
-      if (hero) hdr.classList.toggle('show', window.scrollY > hero.offsetHeight - 80);
+      if (hero) hdr.classList.toggle('show', window.scrollY > hero.offsetTop + hero.offsetHeight - 80);
       for (var i = revs.length - 1; i >= 0; i--) {
         if (revs[i].getBoundingClientRect().top < vh * 0.92) {
           reveal(revs[i]);

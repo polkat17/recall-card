@@ -97,6 +97,10 @@
 
     <div class="signup">
       <div class="signup-card" id="signupCard">
+        <!-- Posts straight to a Google Form's response endpoint (owner: ximera1715@gmail.com).
+             entry.* IDs were read off the form via Forms menu > Get pre-filled link; if the
+             form's fields are ever edited/reordered, Google reassigns these IDs and this form
+             will silently stop recording submissions — regenerate the link and update below. -->
         <form id="notifyForm" action="https://docs.google.com/forms/d/e/1FAIpQLSelAVcxlZowZsBolInusRHgNFFCZZSX6YuiC_twUvrkZSnJ_Q/formResponse" method="POST" target="hidden_iframe">
           <div class="field">
             <label for="email">Email</label>
@@ -142,7 +146,6 @@
     var submitBtn = document.getElementById('submitBtn');
     var formError = document.getElementById('formError');
     var submitted = false;
-    var firstLoad = true;
 
     form.addEventListener('submit', function () {
       if (!form.checkValidity()) return;
@@ -150,25 +153,27 @@
       submitBtn.disabled = true;
       submitBtn.textContent = 'Sending…';
       formError.classList.remove('on');
-    });
 
-    iframe.addEventListener('load', function () {
-      if (firstLoad) { firstLoad = false; return; }
-      if (!submitted) return;
-      card.classList.add('done');
-      successMsg.classList.add('on');
-    });
-
-    // Failsafe: if the iframe never fires load (blocked/offline), stop
-    // showing "Sending…" so the user isn't stuck on a dead button.
-    form.addEventListener('submit', function () {
+      // Failsafe: if the iframe never fires load (blocked/offline), stop
+      // showing "Sending…" so the user isn't stuck on a dead button. Kept
+      // generous since a late success (load firing after this) still flips
+      // the UI to "done" below — a slow connection just sees the error
+      // briefly before that happens, rather than a permanently stuck button.
       setTimeout(function () {
         if (submitted && submitBtn.disabled && !card.classList.contains('done')) {
           submitBtn.disabled = false;
           submitBtn.textContent = 'Notify me';
           formError.classList.add('on');
         }
-      }, 8000);
+      }, 12000);
+    });
+
+    // The iframe (no initial src) fires one no-op "load" on page parse,
+    // before submitted is ever true, so the check below already ignores it.
+    iframe.addEventListener('load', function () {
+      if (!submitted) return;
+      card.classList.add('done');
+      successMsg.classList.add('on');
     });
   })();
   </script>
