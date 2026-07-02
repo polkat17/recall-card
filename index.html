@@ -78,6 +78,16 @@
   .btn-ghost { background: transparent; color: var(--ink); border: 0.5px solid var(--hairline); padding: 12px 20px; border-radius: var(--r-btn); font-size: 15px; }
   .btn-ghost:hover { border-color: rgba(26,26,26,0.28); background: rgba(26,26,26,0.02); }
 
+  /* ── iOS notify banner ───────────────────────────────────── */
+  .ios-banner { background: var(--dark); color: var(--bg); font-size: 13.5px; }
+  .ios-banner.hide { display: none; }
+  .ios-banner-inner { display: flex; align-items: center; justify-content: center; gap: 14px; padding: 10px 46px; position: relative; text-align: center; }
+  .ios-banner-text a { color: var(--gold); text-decoration: none; font-weight: 600; }
+  .ios-banner-text a:hover { text-decoration: underline; }
+  .ios-banner-close { position: absolute; right: 24px; top: 50%; transform: translateY(-50%); background: none; border: none; color: rgba(250,248,244,0.55); font-size: 20px; line-height: 1; cursor: pointer; padding: 4px 8px; }
+  .ios-banner-close:hover { color: var(--bg); }
+  @media (max-width: 540px) { .ios-banner-inner { padding: 10px 40px 10px 16px; font-size: 12.5px; } .ios-banner-close { right: 8px; } }
+
   /* ── sticky header ───────────────────────────────────────── */
   header { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 14px 0; transform: translateY(-100%); transition: transform .4s cubic-bezier(.2,.7,.3,1), background .3s, border-color .3s; border-bottom: 0.5px solid transparent; }
   header.show { transform: translateY(0); background: rgba(250,248,244,0.82); -webkit-backdrop-filter: saturate(180%) blur(16px); backdrop-filter: saturate(180%) blur(16px); border-bottom-color: var(--hairline); }
@@ -246,6 +256,14 @@
 <!-- ══════════════ MARKETING SITE ══════════════ -->
 <div id="site">
   <span id="top"></span>
+
+  <!-- iOS NOTIFY BANNER -->
+  <div class="ios-banner" id="iosBanner">
+    <div class="wrap ios-banner-inner">
+      <span class="ios-banner-text">iOS is coming to Recalla. <a href="ios.html">Get notified when it launches →</a></span>
+      <button class="ios-banner-close" id="iosBannerClose" aria-label="Dismiss">×</button>
+    </div>
+  </div>
 
   <!-- HERO -->
   <section class="hero">
@@ -454,6 +472,7 @@
       </div>
       <div class="foot-links">
         <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="ios.html">Notify me for iOS</a>
         <a href="#" target="_blank" rel="noopener" data-play>Get it on Google Play</a>
         <a href="mailto:plkt.studios@gmail.com">Contact</a>
       </div>
@@ -487,6 +506,19 @@
 
   // ── Marketing site interactions ──────────────────────────
   function initSite() {
+    var banner = document.getElementById('iosBanner');
+    var bannerClose = document.getElementById('iosBannerClose');
+    if (banner) {
+      if (localStorage.getItem('iosBannerDismissed')) {
+        banner.classList.add('hide');
+      } else if (bannerClose) {
+        bannerClose.addEventListener('click', function () {
+          banner.classList.add('hide');
+          try { localStorage.setItem('iosBannerDismissed', '1'); } catch (_) {}
+        });
+      }
+    }
+
     var hdr = document.getElementById('hdr');
     var hero = document.querySelector('.hero');
     var prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
